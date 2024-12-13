@@ -1,8 +1,8 @@
 # Vulnerability analysis
 
-## Usage
+## Backend usage
 ```
-poetry run flask run
+poetry run python backend
 ```
 
-After that, you can access site at `http://127.0.0.1:5000/hello`
+After that, you can access site at `http://127.0.0.1:8000/`
