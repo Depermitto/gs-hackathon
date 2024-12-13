@@ -1,34 +1,30 @@
-# import yaml
+import yaml
 
-# with open("example.yaml") as stream:
-#     try:
-#         print(yaml.safe_load(stream))
-#     except yaml.YAMLError as exc:
-#         print(exc)
+with open("example.yaml", "r") as f:
+    spec = yaml.safe_load(f)
+    paths = spec.get("paths", {})
+    for path, methods in paths.items():
+        for method, details in methods.items():
+            print(f"\nAnalyzing {method.upper()} {path}")
 
-from openapi_parser import parse
-from openapi_parser.specification import DataType
+            # Check for authentication
+            security = details.get("security", spec.get("security", []))
+            if not security:
+                print("- Warning: No security defined for this endpoint.")
 
-specification = parse("example.yaml")
+            # Check for input validation
+            request_body = details.get("requestBody")
+            if request_body:
+                content = request_body.get("content", {})
+                if not any(
+                    "schema" in content_type for content_type in content.values()
+                ):
+                    print("- Warning: No schema defined for request body.")
+            else:
+                print("- Info: No request body defined.")
 
-# print(specification)
-
-# input fieldy
-for path in specification.paths:
-    print(f"{path.url}: ")
-    for op in path.operations:
-        print(f"\t{op.method}:")
-        for res in op.responses:
-            print(f"\t\t{res.code}")
-            for c in res.content:
-                if c.schema.type == DataType.ARRAY:
-                    x = c.schema.items
-                else:
-                    x = c.schema.properties
-                try:
-                    if x.type == DataType.OBJECT:
-                        x = x.properties
-                except:
-                    pass
-                for s in x:
-                    print(f"\t\t\t{s}")
+            # Check HTTP method usage
+            if method.lower() in ["get", "delete"]:
+                print(
+                    "- Info: Ensure sensitive operations aren't exposed via GET or DELETE."
+                )
