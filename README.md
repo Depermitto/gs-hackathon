@@ -1,7 +1,22 @@
 # Vulnerability analysis
 
-## Backend usage
+## Getting started with backend
+
+Install poetry using:
+
+```shell
+pipx install poetry
 ```
+
+Setup project files:
+
+```shell
+poetry install
+```
+
+Run webserver:
+
+```shell
 poetry run python backend
 ```
 
