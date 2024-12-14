@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Text, Button, Group, Stack, Center } from '@mantine/core';
+import { Text, Button, Stack, Center, TextInput } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 
 function UploadAPI(props: { onUpload: (file: File) => void }) {
@@ -16,19 +16,26 @@ function UploadAPI(props: { onUpload: (file: File) => void }) {
 
     return (
         <Stack align="center">
-            {/* Instructions */}
             <Text size="lg">
             Upload the documentation file
             </Text>
-            <Text c="dimmed" size="sm">
-            Drag and drop a JSON or YAML file into the area below, or click to select a file manually.
+
+            <TextInput
+                placeholder="https://api.example.com/docs"
+                label="Enter the API documentation URL below:"
+                radius="md"
+                size="md"
+                style={{ width: '100%' }}
+            />
+
+            <Text>
+                Or drag and drop a YAML file into the area below, or click to select a file manually.
             </Text>
 
-            {/* Dropzone */}
             <Dropzone
             openRef={openRef}
             onDrop={onAddFile}
-            accept={['application/json', 'application/yaml']}
+            accept={['application/yaml']}
             styles={{
                 root: {
                 borderWidth: '2px',
@@ -47,7 +54,7 @@ function UploadAPI(props: { onUpload: (file: File) => void }) {
                         </Button>
                     </Center>
                     <Text size="sm" c="dimmed">
-                        Supported formats: JSON, YAML
+                        Supported formats: YAML
                     </Text>
                     </Dropzone.Idle>
                     <Dropzone.Accept>
