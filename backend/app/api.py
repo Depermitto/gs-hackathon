@@ -5,8 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
-    "localhost:3000"
+    "http://localhost:5173",
+    "localhost:5173"
 ]
 
 
@@ -21,4 +21,7 @@ app.add_middleware(
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
-    return {"message": "This is the root route of the API"}
+    return {
+        "title": "API example",
+        "message": "This is the root route of the API"
+    }
