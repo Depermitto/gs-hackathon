@@ -8,6 +8,7 @@ def pipeline(yaml_path: str, injections_path: str, auth: str | None = None):
     print(f"Base URL determined as: {base_path}\n")
     with open(injections_path, "r") as f:
         injs = f.read().splitlines()
+    result = []
     for route in routes:
         body_status = False
         path_status = False
