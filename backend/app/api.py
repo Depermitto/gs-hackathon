@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 import injection
@@ -7,7 +7,10 @@ from . import auth_check
 
 app = FastAPI()
 
-origins = ["http://localhost:3000", "localhost:3000"]
+origins = [
+    "http://localhost:5173",
+    "localhost:5173"
+]
 
 
 app.add_middleware(
@@ -19,8 +22,32 @@ app.add_middleware(
 )
 
 
-@app.get("/", tags=["root"])
+@app.get("/api", tags=["root"])
 async def read_root() -> dict:
+    return {
+        "title": "API example",
+        "message": "This is the root route of the API"
+    }
+
+
+@app.post("/api/process")
+async def process_file(file: UploadFile = File(...)):
+    contents = await file.read()
+
+    # Example processing (e.g., return the file name and size)
+    result = {
+        "filename": file.filename,
+        "content_type": file.content_type,
+        "size": len(contents)
+    }
+    print(result)
+
+    return {
+        "errors": {
+            "message": "File processed successfully",
+            "code": 200
+        }
+    }
     return {"message": "This is the root route of the API"}
 
 
