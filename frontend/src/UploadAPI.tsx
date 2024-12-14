@@ -2,16 +2,22 @@ import { useRef, useState } from 'react';
 import { Text, Button, Stack, Center, TextInput } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 
-function UploadAPI(props: { onUpload: (file: File) => void }) {
-    const { onUpload } = props;
+function UploadAPI(props: { onUpload: (file: File) => void, onSetUrl: (url: string) => void }) {
+    const { onUpload, onSetUrl } = props;
     const openRef = useRef<() => void>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [url, setUrl] = useState<string>('');
 
     const onAddFile = (files: File[]) => {
         if (files.length > 0) {
             setSelectedFile(files[0]);
             onUpload(files[0]);
         }
+    }
+
+    const onUrlChange = (newUrl: string) => {
+        setUrl(newUrl);
+        onSetUrl(newUrl);
     }
 
     return (
@@ -26,6 +32,8 @@ function UploadAPI(props: { onUpload: (file: File) => void }) {
                 radius="md"
                 size="md"
                 style={{ width: '100%' }}
+                value={url}
+                onChange={(event) => onUrlChange(event.currentTarget.value)}
             />
 
             <Text>
@@ -77,6 +85,11 @@ function UploadAPI(props: { onUpload: (file: File) => void }) {
             {selectedFile && (
             <Text size="sm" c="green">
                 Selected file: <strong>{selectedFile.name}</strong>
+            </Text>
+            )}
+            {!selectedFile && url !== '' && (
+            <Text size="sm" c="green">
+                Selected URL: <strong>{url}</strong>
             </Text>
             )}
       </Stack>
