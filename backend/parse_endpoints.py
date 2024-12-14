@@ -5,6 +5,7 @@ def parse_yaml(path):
     results = []
     with open("example.yaml", "r") as f:
         spec = yaml.safe_load(f)
+        base = spec["servers"][0]["url"]
     paths = spec.get("paths", {})
     for path, methods in paths.items():
         for method, details in methods.items():
@@ -25,11 +26,11 @@ def parse_yaml(path):
                     "schema": schema,
                 }
             )
-    return results
+    return base, results
 
 
 if __name__ == "__main__":
-    res = parse_yaml("example_yaml")
-
+    base, res = parse_yaml("example_yaml")
+    print(f"Base URL: {base}")
     for r in res:
         print(f"{r}\n")
