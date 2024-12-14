@@ -33,3 +33,14 @@ npm run dev
 ```
 
 After that, you can access site at `127.0.0.1:5173`
+
+
+## Example API:
+**Attention:** `docker` has to be installed.
+
+```
+docker run --rm -p 5000:5000 erev0s/vampi:latest
+curl -X 'GET' 'http://127.0.0.1:5000/createdb' -H 'accept: application/json'
+```
+
+After that, you can access the API documentation at `127.0.0.1:5000/ui`
