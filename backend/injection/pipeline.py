@@ -1,14 +1,13 @@
 import requests
-from parse_endpoints import parse_yaml
-from prepare_payloads import prepare_payload
+from .parse_endpoints import parse_yaml
+from .prepare_payloads import prepare_payload
 
 
-def pipeline(yaml_path, injections_path, auth):
+def pipeline(yaml_path: str, injections_path: str, auth: str | None = None):
     base_path, routes = parse_yaml(yaml_path)
     print(f"Base URL determined as: {base_path}\n")
     with open(injections_path, "r") as f:
         injs = f.read().splitlines()
-    result = []
     for route in routes:
         print(route)
     for route in routes:
@@ -31,7 +30,7 @@ def pipeline(yaml_path, injections_path, auth):
                 )
 
 
-def req(url, method, body, auth):
+def req(url, method, body, auth: str | None = None):
     func = None
     success = False
     try:
@@ -46,9 +45,13 @@ def req(url, method, body, auth):
                 func = requests.delete
             case "PATCH":
                 func = requests.patch
-        response = func(
-            url, params=body, json=body, headers={"Authorization": f"Bearer {auth}"}
-        )
+        if auth:
+            response = func(
+                url, params=body, json=body, headers={"Authorization": f"Bearer {auth}"}
+            )
+        else:
+            response = func(url, params=body, json=body)
+
         if response.status_code == 200:
             success = True
     except:
