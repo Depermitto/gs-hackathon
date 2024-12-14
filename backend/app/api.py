@@ -37,7 +37,6 @@ async def process_file(file: UploadFile = File(...)):
     print(result)
 
     return {"errors": {"message": "File processed successfully", "code": 200}}
-    return {"message": "This is the root route of the API"}
 
 
 @app.post("/scan")
