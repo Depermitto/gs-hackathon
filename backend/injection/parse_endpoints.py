@@ -21,10 +21,10 @@ def parse_yaml(path) -> Tuple[str, dict[str, str | bool]]:
             schema (`dict[str,Any] | None`): request body schema (None if no body is specified)
     """
     try:
-        spec = yaml.safe_load(path)
-    except:
         with open(path) as f:
             spec = yaml.safe_load(f)
+    except:
+        spec = yaml.safe_load(path)
     base_url = spec["servers"][0]["url"]
 
     results = []
