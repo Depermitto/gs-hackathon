@@ -10,25 +10,36 @@ def pipeline(yaml_path, injections_path, auth):
         injs = f.read().splitlines()
     result = []
     for route in routes:
-        print(route)
-    for route in routes:
+        body_status = False
+        path_status = False
         if route.get("schema"):
-            print(f"\nRoute: {route['method']} {route['path']}")
             for inj in injs:
                 payload = prepare_payload(route["schema"], inj)
-                print(req(base_path + route["path"], route["method"], payload, auth))
-        if route["path_param"]:
-            print(f"\nRoute: {route['method']} {route['path']}")
-            for inj in injs:
-                payload = prepare_payload(route["schema"], inj)
-                print(
-                    req(
-                        base_path + route["path"].split("{")[0] + inj,
-                        route["method"],
-                        payload,
-                        auth,
-                    )
+                body_status = req(
+                    base_path + route["path"], route["method"], payload, auth
                 )
+                if body_status:
+                    break
+        if route["path_param"]:
+            for inj in injs:
+                payload = prepare_payload(route["schema"], inj)
+                path_status = req(
+                    base_path + route["path"].split("{")[0] + inj,
+                    route["method"],
+                    payload,
+                    auth,
+                )
+                if path_status:
+                    break
+        result.append(
+            {
+                "route": f"{route['method']} {route['path']}",
+                "secure": route["secure"],
+                "body_injection": body_status,
+                "path_injection": path_status,
+            }
+        )
+    return result
 
 
 def req(url, method, body, auth):
@@ -46,19 +57,19 @@ def req(url, method, body, auth):
                 func = requests.delete
             case "PATCH":
                 func = requests.patch
-        response = func(
-            url, params=body, json=body, headers={"Authorization": f"Bearer {auth}"}
-        )
+        response = func(url, params=body, json=body, headers=auth)
         if response.status_code == 200:
             success = True
-    except:
-        pass
+    except Exception as e:
+        print(e)
     return success
 
 
 if __name__ == "__main__":
-    pipeline(
-        "example.yaml",
-        "injections.txt",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQxNDUzNjAsImlhdCI6MTczNDE0NTMwMCwic3ViIjoibmFtZTEifQ.o7HFDDT4et3J30dsjt2LfIi1bSuVfNgsIiAls8wzeH0",
-    )
+    # HAS TO BE SET MANUALLY IN ORDER TO WORK PROPERLY
+    token = f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQxNDc4NjMsImlhdCI6MTczNDE0NzgwMywic3ViIjoibmFtZTEifQ.SHQ-YrI2gW4H-RNgidc49YtvA7sYT5BavRcqnBTkpuw"
+    auth = {"Authorization": token}
+
+    result = pipeline("example.yaml", "injections.txt", auth)
+    for res in result:
+        print(res)
