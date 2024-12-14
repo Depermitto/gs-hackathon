@@ -31,10 +31,10 @@ function App() {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch('http://localhost:8000/api/process', {
-          method: 'POST',
-          body: formData,
-        });
+      const response = await fetch('http://localhost:8000/api/process/file', {
+        method: 'POST',
+        body: formData,
+      });
 
         if (!response.ok) {
           throw new Error('Failed to fetch results');
@@ -44,7 +44,7 @@ function App() {
         navigate('/results', { state: { results: data } });
       }
       else {
-        const response = await fetch('http://localhost:8000/api/process', {
+        const response = await fetch('http://localhost:8000/api/process/scraper', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
