@@ -28,6 +28,7 @@ def pipeline(yaml_path, injections_path, auth):
                     route["method"],
                     payload,
                     auth,
+                    False,
                 )
                 if path_status:
                     break
@@ -42,19 +43,23 @@ def pipeline(yaml_path, injections_path, auth):
     return result
 
 
-def req(url, method, body, auth):
+def req(url, method, body, auth, is_body=True):
     func = None
     success = False
     try:
         match method:
             case "GET":
                 func = requests.get
-            case "POST":
-                func = requests.post
+            case "POST":  # Rather impossible to differ
+                return False
             case "PUT":
+                if is_body:  # makes no sense when in body
+                    return False
                 func = requests.put
             case "DELETE":
-                func = requests.delete
+                # WARNING - VERY DANGEROUS, COMMENTED FOR SAFETY
+                # func = requests.delete
+                return False
             case "PATCH":
                 func = requests.patch
         response = func(url, params=body, json=body, headers=auth)
@@ -67,6 +72,12 @@ def req(url, method, body, auth):
 
 if __name__ == "__main__":
     # HAS TO BE SET MANUALLY IN ORDER TO WORK PROPERLY
+    # THIS IS A DIRTY EXAMPLE FOR https://github.com/erev0s/VAmPI/tree/master
+    res = requests.post(
+        "http://127.0.0.1:5000/users/v1/login",
+        json={"password": "pass1", "username": "name1"},
+    )
+    print(res._content)
     token = f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQxNDc4NjMsImlhdCI6MTczNDE0NzgwMywic3ViIjoibmFtZTEifQ.SHQ-YrI2gW4H-RNgidc49YtvA7sYT5BavRcqnBTkpuw"
     auth = {"Authorization": token}
 
