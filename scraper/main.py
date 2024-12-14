@@ -50,7 +50,7 @@ def scrape_endpoints(url):
 
     base_url = re.search(r'^.+?[^\/:](?=[?\/]|$)', url).group(0)
 
-    return base_url, json.dumps(endpoints)
+    return base_url, endpoints
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
