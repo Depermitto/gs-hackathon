@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import json
+import argparse
 
 def scrape_endpoints(url):
     driver = webdriver.Chrome()
@@ -32,4 +33,7 @@ def scrape_endpoints(url):
     return json.dumps(endpoints)
 
 if __name__ == '__main__':
-    print(scrape_endpoints('http://10.147.20.140:5000/ui'))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('url', help='URL of the Swagger UI')
+    args = parser.parse_args()
+    print(scrape_endpoints(args.url))
