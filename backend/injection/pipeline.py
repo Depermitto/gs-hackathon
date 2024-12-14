@@ -35,7 +35,7 @@ def pipeline(yaml_path: str, injections_path: str, auth: str | None = None):
         result.append(
             {
                 "route": f"{route['method']} {route['path']}",
-                "secure": route["secure"],
+                "requires_auth": route["secure"],
                 "body_injection": body_status,
                 "path_injection": path_status,
             }
@@ -76,7 +76,7 @@ def req(url, method, body, auth: str | None = None, is_body: bool = True):
 
 if __name__ == "__main__":
     # HAS TO BE SET MANUALLY IN ORDER TO WORK PROPERLY
-    # THIS IS A DIRTY EXAMPLE FOR https://github.com/erev0s/VAmPI/tree/master
+    # THIS IS A DIRTY EXAMPLE FOR https://github.com/erev0s/VAmPI
     res = requests.post(
         "http://127.0.0.1:5000/users/v1/login",
         json={"password": "pass1", "username": "name1"},
