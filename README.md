@@ -22,11 +22,11 @@ poetry run python backend
 
 After that, you can access API at `http://127.0.0.1:8000/`
 
-
 ## Setting up frontend
+
 **Attention:** `npm` has to be installed.
 
-```
+```shell
 cd frontend
 npm install
 npm run dev
@@ -34,11 +34,11 @@ npm run dev
 
 After that, you can access site at `127.0.0.1:5173`
 
+## Example API
 
-## Example API:
 **Attention:** `docker` has to be installed.
 
-```
+```shell
 docker run --rm -p 5000:5000 erev0s/vampi:latest
 curl -X 'GET' 'http://127.0.0.1:5000/createdb' -H 'accept: application/json'
 ```
