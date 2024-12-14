@@ -1,5 +1,4 @@
 import yaml
-import fastapi
 
 from typing import Tuple
 
@@ -52,7 +51,7 @@ def parse_yaml(path) -> Tuple[str, dict[str, str | bool]]:
 
 
 if __name__ == "__main__":
-    base, res = parse_yaml("example_yaml")
+    base, res = parse_yaml("example.yaml")
     print(f"Base URL: {base}")
     for r in res:
         print(f"{r}\n")

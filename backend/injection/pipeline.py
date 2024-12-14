@@ -6,13 +6,17 @@ from typing import Any
 
 
 def pipeline(
-    yaml_path: str, injections_path: str, auth: dict[str, str] | None = None
+    base_url: str,
+    routes: dict[str, str | bool],
+    injections_path: str,
+    auth: dict[str, str] | None = None,
 ) -> list[dict[str, str | bool]]:
     """
     Check API for possible SQL injections
 
     # Args:
-        yaml_path (`str`): path to the OpenAPI .yaml file
+        base_url (`str`): the entrypoint to the API service
+        results (`dict[str,str | bool]`): dictionary containing information about endpoints
         injections_path(`str`): path to the file containing commands that will be possibly injected
         auth (`dict[str,str] | None`): API authorization method (None if not required)
 
@@ -23,10 +27,12 @@ def pipeline(
             body_injection (`bool`): whether injection through request body was successful
             path_injection (`bool`): whether injection through path was successful
     """
-    base_path, routes = parse_yaml(yaml_path)
-    print(f"Base URL determined as: {base_path}\n")
-    with open(injections_path, "r") as f:
-        injs = f.read().splitlines()
+    print(f"Base URL determined as: {base_url}\n")
+    try:
+        with open(injections_path, "r") as f:
+            injs = f.read().splitlines()
+    except:
+        injs = injections_path
     result = []
     for route in routes:
         body_status = False
@@ -35,7 +41,7 @@ def pipeline(
             for inj in injs:
                 payload = prepare_payload(route["schema"], inj)
                 body_status = req(
-                    base_path + route["path"], route["method"], payload, auth
+                    base_url + route["path"], route["method"], payload, auth
                 )
                 if body_status:
                     break
@@ -43,7 +49,7 @@ def pipeline(
             for inj in injs:
                 payload = prepare_payload(route["schema"], inj)
                 path_status = req(
-                    base_path + route["path"].split("{")[0] + inj,
+                    base_url + route["path"].split("{")[0] + inj,
                     route["method"],
                     payload,
                     auth,
@@ -123,6 +129,7 @@ if __name__ == "__main__":
     token = f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQxNDc4NjMsImlhdCI6MTczNDE0NzgwMywic3ViIjoibmFtZTEifQ.SHQ-YrI2gW4H-RNgidc49YtvA7sYT5BavRcqnBTkpuw"
     auth = {"Authorization": token}
 
-    result = pipeline("example.yaml", "injections.txt", auth)
+    base_url, routes = parse_yaml("example.yaml")
+    result = pipeline(base_url, routes, "injections.txt", auth)
     for res in result:
         print(res)

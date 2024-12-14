@@ -67,7 +67,8 @@ async def scan() -> dict:
     raport["cookie_permanent"] = not auth_check.check_cookie_timeout(url)
     raport["vulnerabilities"] += raport["cookie_permanent"]
 
-    raport["sql"] = injection.pipeline(yaml_path, "injections.txt")
+    base_url, routes = injection.parse_yaml(yaml_path)
+    raport["sql"] = injection.pipeline(base_url, routes, "injections.txt")
     for sql_raport in raport["sql"]:
         raport["vulnerabilities"] += sql_raport["body_injection"]
         raport["vulnerabilities"] += sql_raport["path_injection"]
