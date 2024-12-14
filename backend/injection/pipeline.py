@@ -2,8 +2,24 @@ import requests
 from .parse_endpoints import parse_yaml
 from .prepare_payloads import prepare_payload
 
+from typing import Any
 
-def pipeline(yaml_path: str, injections_path: str, auth: str | None = None):
+def pipeline(yaml_path: str, injections_path: str, auth: dict[str,str] | None = None) -> list[dict[str,str|bool]]:
+    """
+    Check API for possible SQL injections
+
+    # Args:
+        yaml_path (`str`): path to the OpenAPI .yaml file
+        injections_path(`str`): path to the file containing commands that will be possibly injected
+        auth (`dict[str,str] | None`): API authorization method (None if not required)
+    
+    # Returns:
+        result (`list[dict[str,str|bool]]`): A dictionary with the following fields:
+            route (`str`): method + path to endpoint
+            requires_auth (`str`): whether the endpoint requires user authorization
+            body_injection (`bool`): whether injection through request body was successful
+            path_injection (`bool`): whether injection through path was successful
+    """
     base_path, routes = parse_yaml(yaml_path)
     print(f"Base URL determined as: {base_path}\n")
     with open(injections_path, "r") as f:
@@ -43,7 +59,20 @@ def pipeline(yaml_path: str, injections_path: str, auth: str | None = None):
     return result
 
 
-def req(url, method, body, auth: str | None = None, is_body: bool = True):
+def req(url: str, method: str, body: dict[str, Any], auth: dict[str,str] | None = None, is_body: bool = True) -> bool:
+    """
+    Perform a request to the API endpoint
+    
+    # Args:
+        url (`str`): URL to the API endpoint
+        method (`str`): HTTP request method
+        body (`dict[str,Any]`): json body of the request
+        auth (`dict[str,str] | None`): API authorization method (None if not required)
+        is_body (`bool`): stating whether checking for body injection or path injection
+    
+    # Returns:
+        success (`bool`): whether the injection was successful
+    """
     func = None
     success = False
     try:

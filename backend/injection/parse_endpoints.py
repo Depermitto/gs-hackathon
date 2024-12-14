@@ -1,11 +1,28 @@
 import yaml
 
+from typing import Tuple
 
-def parse_yaml(path):
+
+def parse_yaml(path: str) -> Tuple[str, dict[str, str | bool]]:
+    """
+    Read information about API endpoints from the OpenAPI .yaml file
+
+    # Args:
+        path (`str`): path to the file
+
+    # Returns:
+        base_url (`str`): the entrypoint to the API service
+        results (`dict[str,str | bool]`): dictionary containing information about endpoints containing the following fields:
+            method (`str`): HTTP request method
+            path (`str`): path to the API endpoint
+            secure (`bool`): whether the API endpoint requires authorization
+            path_param (`bool`): whether the API endpoint path contains a parameter
+            schema (`dict[str,Any] | None`): request body schema (None if no body is specified)
+    """
     results = []
     with open("example.yaml", "r") as f:
         spec = yaml.safe_load(f)
-        base = spec["servers"][0]["url"]
+        base_url = spec["servers"][0]["url"]
     paths = spec.get("paths", {})
     for path, methods in paths.items():
         for method, details in methods.items():
@@ -26,7 +43,7 @@ def parse_yaml(path):
                     "schema": schema,
                 }
             )
-    return base, results
+    return base_url, results
 
 
 if __name__ == "__main__":
