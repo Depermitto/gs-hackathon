@@ -1,8 +1,10 @@
 import requests
 
+
 def check_https(url):
     req = requests.get(url)
-    return req.url.startswith('https')
+    return req.url.startswith("https")
+
 
 def check_cookie_secure(url):
     req = requests.get(url)
@@ -11,7 +13,8 @@ def check_cookie_secure(url):
         if cookie.secure:
             return True
     return False
-    
+
+
 def check_cookie_timeout(url):
     req = requests.get(url)
     cookies = req.cookies

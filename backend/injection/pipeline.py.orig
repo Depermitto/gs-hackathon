@@ -42,7 +42,11 @@ def pipeline(yaml_path: str, injections_path: str, auth: str | None = None):
     return result
 
 
+<<<<<<< HEAD
+def req(url, method, body, auth: str | None = None):
+=======
 def req(url, method, body, auth, is_body=True):
+>>>>>>> 44139db81bb4384386bee864d0007d7a87cc2450
     func = None
     success = False
     try:
@@ -61,13 +65,17 @@ def req(url, method, body, auth, is_body=True):
                 return False
             case "PATCH":
                 func = requests.patch
+<<<<<<< HEAD
         if auth:
-        response = func(
-            url, params=body, json=body, headers={"Authorization": f"Bearer {auth}"}
-        )
+            response = func(
+                url, params=body, json=body, headers={"Authorization": f"Bearer {auth}"}
+            )
         else:
             response = func(url, params=body, json=body)
 
+=======
+        response = func(url, params=body, json=body, headers=auth)
+>>>>>>> 44139db81bb4384386bee864d0007d7a87cc2450
         if response.status_code == 200:
             success = True
     except Exception as e:
