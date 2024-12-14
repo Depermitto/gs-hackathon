@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import json
 import argparse
+import re
 
 def scrape_endpoints(url):
     driver = webdriver.Chrome()
@@ -47,7 +48,9 @@ def scrape_endpoints(url):
         })
     driver.quit()
 
-    return json.dumps(endpoints)
+    base_url = re.search(r'^.+?[^\/:](?=[?\/]|$)', url).group(0)
+
+    return base_url, json.dumps(endpoints)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
