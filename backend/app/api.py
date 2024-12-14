@@ -25,18 +25,29 @@ async def read_root() -> dict:
 
 
 @app.post("/api/process")
-async def process_file(file: UploadFile = File(...)):
+async def process_file(file: UploadFile = File(...)) -> dict:
     contents = await file.read()
 
-    # Example processing (e.g., return the file name and size)
-    result = {
-        "filename": file.filename,
-        "content_type": file.content_type,
-        "size": len(contents),
-    }
-    print(result)
+    url, _ = injection.parse_endpoints.parse_yaml(contents)
 
-    return {"errors": {"message": "File processed successfully", "code": 200}}
+    raport = {}
+    raport["vulnerabilities"] = 0
+
+    raport["https"] = auth_check.check_https(url)
+    raport["vulnerabilities"] += not raport["https"]
+
+    raport["cookie_secure"] = auth_check.check_cookie_secure(url)
+    raport["vulnerabilities"] += not raport["cookie_secure"]
+
+    raport["cookie_permanent"] = not auth_check.check_cookie_timeout(url)
+    raport["vulnerabilities"] += raport["cookie_permanent"]
+
+    # raport["sql"] = injection.pipeline(yaml_path, "injections.txt")
+    # for sql_raport in raport["sql"]:
+    #     raport["vulnerabilities"] += sql_raport["body_injection"]
+    #     raport["vulnerabilities"] += sql_raport["path_injection"]
+
+    return raport
 
 
 @app.post("/scan")

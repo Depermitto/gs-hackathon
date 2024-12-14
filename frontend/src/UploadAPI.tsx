@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Text, Button, Group } from '@mantine/core';
+import { Text, Button, Group, Stack, Center } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 
 function UploadAPI(props: { onUpload: (file: File) => void }) {
@@ -9,48 +9,70 @@ function UploadAPI(props: { onUpload: (file: File) => void }) {
 
     const onAddFile = (files: File[]) => {
         if (files.length > 0) {
-            console.log(files);
             setSelectedFile(files[0]);
             onUpload(files[0]);
         }
     }
 
     return (
-        <div className="text-center m-auto w-1/2 max-w-96">
-            {/* <p>Enter the API documentation URL below:</p>
-            <TextInput className="py-2" placeholder="https://api.example.com/docs" />
-            <p>Or upload the documentation file</p> */}
-            <Text>Upload the documentation file:</Text>
+        <Stack align="center">
+            {/* Instructions */}
+            <Text size="lg">
+            Upload the documentation file
+            </Text>
+            <Text c="dimmed" size="sm">
+            Drag and drop a JSON or YAML file into the area below, or click to select a file manually.
+            </Text>
+
+            {/* Dropzone */}
             <Dropzone
-                className="border-dashed border-2 rounded-md py-10"
-                openRef={openRef}
-                accept={['application/json', 'application/yaml']}
-                onDrop={onAddFile}
+            openRef={openRef}
+            onDrop={onAddFile}
+            accept={['application/json', 'application/yaml']}
+            styles={{
+                root: {
+                borderWidth: '2px',
+                borderStyle: 'dashed',
+                borderRadius: '8px',
+                padding: '40px',
+                backgroundColor: '#f8fafc',
+                },
+            }}
             >
-                <Group justify='center'>
+                <Center>
                     <Dropzone.Idle>
-                        <Button onClick={() => openRef.current?.()} style={{ pointerEvents: 'all' }}>
-                            Select file
+                    <Center>
+                        <Button mb="lg" variant="outline" radius="xl" onClick={() => openRef.current?.()}>
+                            Select File
                         </Button>
+                    </Center>
+                    <Text size="sm" c="dimmed">
+                        Supported formats: JSON, YAML
+                    </Text>
                     </Dropzone.Idle>
                     <Dropzone.Accept>
-                        Release the mouse button to upload the file
+                    <Text c="green" size="sm">
+                        Drop the file here to upload
+                    </Text>
                     </Dropzone.Accept>
                     <Dropzone.Reject>
-                        <Button onClick={() => openRef.current?.()} style={{ pointerEvents: 'all' }}>
-                            Select files
-                        </Button>
-                        <Text>File type not supported (only JSON and YAML files are accepted)</Text>
+                    <Text c="red" size="sm">
+                        Unsupported file type
+                    </Text>
                     </Dropzone.Reject>
-                </Group>
-            </Dropzone> 
-            <p className='py-2 text-xs text-gray-500 text-center'>Pro-tip: you can also drag and drop files in the area above!</p>
+                </Center>
+            </Dropzone>
+
+            <Text size="xs" c="dimmed">
+                Tip: You can drag and drop files here!
+            </Text>
+
             {selectedFile && (
-                <p className="py-2 text-green-500 text-center">
-                    Selected file: {selectedFile.name}
-                </p>
+            <Text size="sm" c="green">
+                Selected file: <strong>{selectedFile.name}</strong>
+            </Text>
             )}
-        </div>
+      </Stack>
     )
 }
 

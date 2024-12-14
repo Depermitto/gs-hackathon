@@ -1,23 +1,50 @@
 import '@mantine/core/styles.css'
 
-import { Title } from '@mantine/core';
-import { useLocation } from 'react-router-dom';
+import { Title, Text, Stack, Group, Button } from '@mantine/core';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 
 function Results() {
   const location = useLocation();
   const results = location.state?.results;
-    
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate('/');
+  };
+
+  console.log(results);
   return (
-      <>
-      <Title className="text-center">BetonShield</Title>
+    <Stack align="center">
+      <Title order={1} size="3rem" mt="xl" mb="l">
+        BetonShield
+      </Title>
+
       {results ? (
-          <div className="text-center m-auto w-1/2 max-w-96">
-            <p>{results.errors.message}: {results.errors.code}</p>
-          </div>
-        ) : (
-            <p>Something went wrong!</p>
-        )}
-      </>
+        <Stack align="center">
+          {results.vulnerabilities ? (
+            <IconCircleX size={72} color="red" />
+          ) : (
+            <IconCircleCheck size={72} color="green" />
+          )}
+          <Text size="lg">
+            {results.vulnerabilities
+              ? `Found vulnerabilities: ${results.vulnerabilities}`
+              : 'No vulnerabilities found!'}
+          </Text>
+        </Stack>
+      ) : (
+        <Text size="lg" c="red">
+          Something went wrong!
+        </Text>
+      )}
+
+      <Group>
+        <Button size="md" radius="xl" variant="outline" color="blue" onClick={handleGoBack}>
+          Go Back
+        </Button>
+      </Group>
+    </Stack>
   )
 }
 
