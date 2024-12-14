@@ -7,10 +7,7 @@ from . import auth_check
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:5173",
-    "localhost:5173"
-]
+origins = ["http://localhost:5173", "localhost:5173"]
 
 
 app.add_middleware(
@@ -24,10 +21,7 @@ app.add_middleware(
 
 @app.get("/api", tags=["root"])
 async def read_root() -> dict:
-    return {
-        "title": "API example",
-        "message": "This is the root route of the API"
-    }
+    return {"title": "API example", "message": "This is the root route of the API"}
 
 
 @app.post("/api/process")
@@ -38,16 +32,11 @@ async def process_file(file: UploadFile = File(...)):
     result = {
         "filename": file.filename,
         "content_type": file.content_type,
-        "size": len(contents)
+        "size": len(contents),
     }
     print(result)
 
-    return {
-        "errors": {
-            "message": "File processed successfully",
-            "code": 200
-        }
-    }
+    return {"errors": {"message": "File processed successfully", "code": 200}}
     return {"message": "This is the root route of the API"}
 
 

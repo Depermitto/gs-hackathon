@@ -1,9 +1,10 @@
 import yaml
+import fastapi
 
 from typing import Tuple
 
 
-def parse_yaml(path: str) -> Tuple[str, dict[str, str | bool]]:
+def parse_yaml(path) -> Tuple[str, dict[str, str | bool]]:
     """
     Read information about API endpoints from the OpenAPI .yaml file
 
@@ -19,10 +20,14 @@ def parse_yaml(path: str) -> Tuple[str, dict[str, str | bool]]:
             path_param (`bool`): whether the API endpoint path contains a parameter
             schema (`dict[str,Any] | None`): request body schema (None if no body is specified)
     """
+    try:
+        spec = yaml.safe_load(path)
+    except:
+        with open(path) as f:
+            spec = yaml.safe_load(f)
+    base_url = spec["servers"][0]["url"]
+
     results = []
-    with open("example.yaml", "r") as f:
-        spec = yaml.safe_load(f)
-        base_url = spec["servers"][0]["url"]
     paths = spec.get("paths", {})
     for path, methods in paths.items():
         for method, details in methods.items():

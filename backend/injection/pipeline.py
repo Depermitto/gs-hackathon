@@ -1,6 +1,6 @@
 import requests
-from parse_endpoints import parse_yaml
-from prepare_payloads import prepare_payload
+from .parse_endpoints import parse_yaml
+from .prepare_payloads import prepare_payload
 
 from typing import Any
 
