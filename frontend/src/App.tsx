@@ -83,7 +83,7 @@ function App() {
             fullWidth
             onClick={handleSubmit}
             loading={loading}
-            disabled={!file}
+            disabled={!file && url === ''}
           >
             {loading ? 'Processing...' : 'Submit'}
           </Button>
