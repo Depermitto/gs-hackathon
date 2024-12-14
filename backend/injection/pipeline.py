@@ -1,10 +1,13 @@
 import requests
-from .parse_endpoints import parse_yaml
-from .prepare_payloads import prepare_payload
+from parse_endpoints import parse_yaml
+from prepare_payloads import prepare_payload
 
 from typing import Any
 
-def pipeline(yaml_path: str, injections_path: str, auth: dict[str,str] | None = None) -> list[dict[str,str|bool]]:
+
+def pipeline(
+    yaml_path: str, injections_path: str, auth: dict[str, str] | None = None
+) -> list[dict[str, str | bool]]:
     """
     Check API for possible SQL injections
 
@@ -12,7 +15,7 @@ def pipeline(yaml_path: str, injections_path: str, auth: dict[str,str] | None = 
         yaml_path (`str`): path to the OpenAPI .yaml file
         injections_path(`str`): path to the file containing commands that will be possibly injected
         auth (`dict[str,str] | None`): API authorization method (None if not required)
-    
+
     # Returns:
         result (`list[dict[str,str|bool]]`): A dictionary with the following fields:
             route (`str`): method + path to endpoint
@@ -59,17 +62,23 @@ def pipeline(yaml_path: str, injections_path: str, auth: dict[str,str] | None = 
     return result
 
 
-def req(url: str, method: str, body: dict[str, Any], auth: dict[str,str] | None = None, is_body: bool = True) -> bool:
+def req(
+    url: str,
+    method: str,
+    body: dict[str, Any],
+    auth: dict[str, str] | None = None,
+    is_body: bool = True,
+) -> bool:
     """
     Perform a request to the API endpoint
-    
+
     # Args:
         url (`str`): URL to the API endpoint
         method (`str`): HTTP request method
         body (`dict[str,Any]`): json body of the request
         auth (`dict[str,str] | None`): API authorization method (None if not required)
         is_body (`bool`): stating whether checking for body injection or path injection
-    
+
     # Returns:
         success (`bool`): whether the injection was successful
     """
@@ -108,7 +117,7 @@ if __name__ == "__main__":
     # THIS IS A DIRTY EXAMPLE FOR https://github.com/erev0s/VAmPI
     res = requests.post(
         "http://127.0.0.1:5000/users/v1/login",
-        json={"password": "pass1", "username": "name1"},
+        json={"password": "pass1", "username": "admin"},
     )
     print(res._content)
     token = f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQxNDc4NjMsImlhdCI6MTczNDE0NzgwMywic3ViIjoibmFtZTEifQ.SHQ-YrI2gW4H-RNgidc49YtvA7sYT5BavRcqnBTkpuw"
