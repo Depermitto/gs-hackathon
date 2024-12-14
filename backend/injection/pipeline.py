@@ -42,7 +42,7 @@ def pipeline(yaml_path: str, injections_path: str, auth: str | None = None):
     return result
 
 
-def req(url, method, body, auth, is_body=True):
+def req(url, method, body, auth: str | None = None, is_body: bool = True):
     func = None
     success = False
     try:
@@ -62,9 +62,7 @@ def req(url, method, body, auth, is_body=True):
             case "PATCH":
                 func = requests.patch
         if auth:
-        response = func(
-            url, params=body, json=body, headers={"Authorization": f"Bearer {auth}"}
-        )
+            response = func(url, params=body, json=body, headers=auth)
         else:
             response = func(url, params=body, json=body)
 
