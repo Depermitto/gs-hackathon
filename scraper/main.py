@@ -16,17 +16,34 @@ def scrape_endpoints(url):
         method = element.find_element(by=By.CLASS_NAME, value='opblock-summary-method').text
         path = element.find_element(by=By.CLASS_NAME, value='opblock-summary-path').text
         try:
+            element.find_element(by=By.CLASS_NAME, value = 'authorization__btn') # Check if authorization is required
+            secure = True
+        except:
+            secure = False
+        try:
             section = element.find_element(by=By.CLASS_NAME, value='opblock-section-request-body')
             description = section.find_element(by=By.CLASS_NAME, value='opblock-description-wrapper')
             tablink = description.find_element(by=By.LINK_TEXT, value='Schema')
             tablink.click()
-            request_body = f'{{\n{description.find_element(by=By.CLASS_NAME, value='inner-object').text}\n}}'
+            # Build schema as a dictionary
+            schema = {}
+            schema_elements = section.find_elements(by=By.CLASS_NAME, value='property-row')
+            for schema_element in schema_elements:
+                key = schema_element.text.split('\n')[0].split(' ')[0] 
+                value = schema_element.text.split('\n')[0].split(' ')[1]
+                example = schema_element.text.split('\n')[1].split(' ')[1]
+                schema[key] = {
+                    'type': value,
+                    'example': example
+                }
         except:
-            request_body = None
+            schema = None
         endpoints.append({
             'method': method,
             'path': path,
-            'request_body': request_body
+            'secure': secure,
+            'path_param': True if '{' in path else False,
+            'schema': schema
         })
     driver.quit()
 
